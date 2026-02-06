@@ -78,9 +78,74 @@ window.clearVisitorLog = function () {
     console.log('%c✅ Visitor log cleared!', 'color: #38ef7d; font-size: 14px; font-weight: bold;');
 };
 
+// ════════════════════════════════════════════════════════
+// 💚 YES RESPONSES TRACKING SYSTEM
+// ════════════════════════════════════════════════════════
+
+// Function to log when someone says YES
+function logYesResponse(name) {
+    const timestamp = new Date().toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        dateStyle: 'medium',
+        timeStyle: 'medium'
+    });
+
+    // Get existing yes responses from localStorage
+    let yesResponses = JSON.parse(localStorage.getItem('valentineYesResponses') || '[]');
+
+    // Add new yes response
+    const yesEntry = {
+        name: name,
+        timestamp: timestamp,
+        date: new Date().toISOString()
+    };
+
+    yesResponses.push(yesEntry);
+
+    // Save back to localStorage
+    localStorage.setItem('valentineYesResponses', JSON.stringify(yesResponses));
+
+    // Log to console with style
+    console.log('%c💚 Someone said YES!', 'color: #38ef7d; font-size: 16px; font-weight: bold;');
+    console.log('%c👤 Name: ' + name, 'color: #11998e; font-size: 14px;');
+    console.log('%c⏰ Time: ' + timestamp, 'color: #38ef7d; font-size: 12px;');
+    console.log('%c💕 Total Yes Responses: ' + yesResponses.length, 'color: #ff69b4; font-size: 12px;');
+    console.log('─────────────────────────────────');
+
+    return yesResponses;
+}
+
+// Function to view all YES responses (call in console: showYesResponses())
+window.showYesResponses = function () {
+    const yesResponses = JSON.parse(localStorage.getItem('valentineYesResponses') || '[]');
+
+    console.log('%c═══════════════════════════════════', 'color: #38ef7d;');
+    console.log('%c💚 WHO ANSWERED "YES" 💚', 'color: #38ef7d; font-size: 18px; font-weight: bold;');
+    console.log('%c═══════════════════════════════════', 'color: #38ef7d;');
+
+    if (yesResponses.length === 0) {
+        console.log('%cNo one has said yes yet! 😢', 'color: #999;');
+    } else {
+        yesResponses.forEach((response, index) => {
+            console.log(`%c${index + 1}. ${response.name}`, 'color: #11998e; font-weight: bold;', `- ${response.timestamp}`);
+        });
+        console.log('%c═══════════════════════════════════', 'color: #38ef7d;');
+        console.log(`%c💕 Total: ${yesResponses.length} people said YES!`, 'color: #ff69b4; font-size: 14px; font-weight: bold;');
+    }
+
+    return yesResponses;
+};
+
+// Function to clear YES responses log (call in console: clearYesResponses())
+window.clearYesResponses = function () {
+    localStorage.removeItem('valentineYesResponses');
+    console.log('%c✅ Yes responses log cleared!', 'color: #38ef7d; font-size: 14px; font-weight: bold;');
+};
+
 // Log instructions on page load
 console.log('%c💕 Valentine Visitor Tracker Active!', 'color: #ff69b4; font-size: 16px; font-weight: bold;');
 console.log('%cTo view all visitors, type: showAllVisitors()', 'color: #667eea; font-size: 12px;');
+console.log('%cTo view who said YES, type: showYesResponses()', 'color: #38ef7d; font-size: 12px;');
 console.log('%cTo clear the log, type: clearVisitorLog()', 'color: #667eea; font-size: 12px;');
 console.log('─────────────────────────────────');
 
@@ -115,6 +180,8 @@ nameInput.addEventListener('input', () => {
 
 // Yes button - Show celebration
 yesBtn.addEventListener('click', () => {
+    // Log the YES response
+    logYesResponse(userName);
     switchScreen(proposalScreen, celebrationScreen);
 });
 
